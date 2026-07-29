@@ -129,7 +129,13 @@ while True:
 
 
 
-    # 你：现在几点了
-    # 模型调用的工具为：get_time
-    # AI: 现在是2026年7月29日，晚上10点19分22秒。
-    # 你：
+# 你：hi
+# AI: 主人你好！
+# 你：现在几点了
+# tool_call: ChatCompletionMessageFunctionToolCall(id='call_3cb1ae29535b433690f664', function=Function(arguments='{}', name='get_time'), type='function', index=0)
+# 模型调用的工具为：get_time
+# args:{}
+# func:<function get_time at 0x0000023884F9DA80>
+# result：2026-07-29 22:43:55.503069
+# AI:现在是2026年7月29日，晚上10点43分55秒。
+# 你：
