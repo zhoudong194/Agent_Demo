@@ -124,10 +124,7 @@ while True:
         history.append({"role": "assistant", "content": final_answer})
 
     # print("AI:", answer)
-
     # print(history)
-
-
 
 # 你：hi
 # AI: 主人你好！
