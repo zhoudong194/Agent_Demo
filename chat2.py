@@ -1,9 +1,5 @@
-from modelscope.preprocessors.templates.tools_prompt import tools_prompt
 from openai import OpenAI
 from datetime import datetime
-
-from pypinyin.runner import func_map
-
 
 def get_time():
     return datetime.now()
