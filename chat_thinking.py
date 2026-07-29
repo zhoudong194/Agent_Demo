@@ -42,15 +42,16 @@ while True:
             if not choices:
                 continue
             delta = choices[0]["delta"]
+            # print(delta)
             reasoning = delta.get("reasoning_content")
             content = delta.get("content")
             #输出思考
-            if reasoning is not None:
-                print(reasoning, end="", flush = True)
+           # if reasoning is not None:
+               # print(reasoning, end="", flush = True)
             #添加回答
             if content is not None:
                 answer += content
-        print(answer)
+        # print(answer)
         history.append({"role": "assistant", "content": answer})
 
     # 非流式输出
@@ -64,7 +65,7 @@ while True:
         answer = response.choices[0].message.content
         print("AI:", answer)
 
-    # print(history)
+    print(history)
 
 # D:\Acode\Anaconda\envs\ai_agent\python.exe D:\Acode\Agent_Demo\chat_thinking.py
 # 你：苹果的功效
