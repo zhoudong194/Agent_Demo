@@ -5,7 +5,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "students.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../function/students.db")
 
 
 def init_database():
