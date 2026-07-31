@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime
 from openai import OpenAI
 
-DB_PATH = "students.db"
+DB_PATH = "db/students.db"
 
 def get_time():
     return datetime.now()
