@@ -11,10 +11,13 @@ DB_PATH = "students.db"
 def get_time():
     return datetime.now().isoformat(timespec="seconds")
 
-def query_students(name=None, grade=None):
-    """根据姓名或年级查学生。都为 None 时返回所有学生(转成 dict 列表,便于 JSON 序列化)。"""
+def query_students(name=None, grade=None, return_year = None):
+    """根据姓名或年级查学生。都为 None 时返回所有学生(转成 dict 列表,便于 JSON 序列化),return_year为None时返回所有年级的学生，否则返回指定年级的学生"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
+
+    if(return_year is not None):
+        grade = f"{return_year}级"
 
     sql = "SELECT * FROM students"
     params = []
@@ -29,6 +32,9 @@ def query_students(name=None, grade=None):
 
     if conditions:
         sql += " WHERE " + " AND ".join(conditions)
+
+    # sql += "LIMIT ? OFFSET ?"
+    # limit = 20
 
     cursor.execute(sql, params)
     rows = cursor.fetchall()
@@ -65,7 +71,11 @@ tools_description = [
                     "grade": {
                         "type": "string",
                         "enum": ["2022级", "2023级", "2024级"],
-                        "description": "年级,必须传这三个值之一。",
+                        "description": "年级，如'2024级'。若return_year不为None，则返回指定年级的学生。",
+                    },
+                    "return_year": {
+                        "type": "integer",
+                        "description": "入学年份数字(如 2024),会自动转成 grade='2024级,用于返回指定年级的学生。",
                     },
                 },
                 "required": [],
@@ -81,6 +91,7 @@ client = OpenAI(
 
 SYSTEM_PROMPT = (
     "你是一个私人助理。请严格按 ReAct 风格思考，在每次对话中都要添加：主人你好."
+    "当你需要查询学生信息时，请使用工具;涉及'今年/去年/前年'等相对时间时,先调 get_time 拿到 ISO 时间后传入return_year参数，如'2024'。"
 )
 
 
@@ -163,3 +174,32 @@ while True:
             })
 
     print()
+
+# 你:查询前年入学的学生
+#
+#  第1轮思考
+# Thought: 需要知道“前年”是哪一年，才能确定对应的学生年级（如2022级表示2022年入学）。因此先调用 get_time 获取当前日期时间，从而推算出前年。
+#
+# tool_name: get_time
+#
+# tool_json: {}
+#
+# Observation[get_time]: "2026-08-06T09:53:49"
+#
+#  第2轮思考
+# Thought: 当前时间是2026年8月6日，因此前年是2024年。对应入学年级为“2024级”。现在调用 query_students 查询2024级所有学生。
+#
+#
+# tool_name: query_students
+#
+# tool_json: {'grade': '2024级'}
+#
+# Observation[query_students]: [[1, "2024001", "张三", 20, "男", "计算机科学与技术", "2024级", "计科1班", 3.85, "zhangsan@school.edu", "13800000001", "2024-09-01"], [2, "2024002", "李四", 19, "女", "软件工程", "2024级", "软工2班", 3.72, "lisi@school.edu", "13800000002", "2024-09-01"], [6, "2024006", "孙八", 19, "女", "软件工程", "2024级", "软工1班", 3.88, "sunba@school.edu", "13800000006", "2024-09-01"], [9, "2024009", "郑十一", 19, "男", "数据科学", "2024级", "数据2班", 3.55, "zhengshiyi@school.edu", "13800000009", "2024-09-01"]]
+#
+#  第3轮思考
+# 主人你好! 前年（2024年）入学的学生有：
+#
+# - 张三，学号2024001，计算机科学与技术专业，计科1班，GPA 3.85
+# - 李四，学号2024002，软件工程专业，软工2班，GPA 3.72
+# - 孙八，学号2024006，软件工程专业，软工1班，GPA 3.88
+# - 郑十一，学号2024009，数据科学专业，数据2班，GPA 3.55
