@@ -90,7 +90,7 @@ client = OpenAI(
 )
 
 SYSTEM_PROMPT = (
-    "你是一个私人助理。请严格按 ReAct 风格思考，在每次对话中都要添加：主人你好."
+    " "
 )
 
 
